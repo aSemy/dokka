@@ -4,23 +4,24 @@ package org.jetbrains
 
 import org.gradle.api.Project
 
-enum class DokkaPublicationChannel {
-    SPACE_DOKKA_DEV,
-    MAVEN_CENTRAL,
-    MAVEN_CENTRAL_SNAPSHOT,
-    GRADLE_PLUGIN_PORTAL;
-
+enum class DokkaPublicationChannel(
     val acceptedDokkaVersionTypes: List<DokkaVersionType>
-        get() = when(this) {
-            MAVEN_CENTRAL -> listOf(DokkaVersionType.RELEASE, DokkaVersionType.RC)
-            MAVEN_CENTRAL_SNAPSHOT -> listOf(DokkaVersionType.SNAPSHOT)
-            SPACE_DOKKA_DEV -> listOf(DokkaVersionType.RELEASE, DokkaVersionType.RC, DokkaVersionType.DEV, DokkaVersionType.SNAPSHOT)
-            GRADLE_PLUGIN_PORTAL -> listOf(DokkaVersionType.RELEASE, DokkaVersionType.RC)
-        }
+) {
+    SPACE_DOKKA_DEV(listOf(
+        DokkaVersionType.RELEASE,
+        DokkaVersionType.RC,
+        DokkaVersionType.DEV,
+        DokkaVersionType.SNAPSHOT
+    )),
+    MAVEN_CENTRAL(listOf(DokkaVersionType.RELEASE, DokkaVersionType.RC)),
+    MAVEN_CENTRAL_SNAPSHOT(listOf(DokkaVersionType.SNAPSHOT)),
+    GRADLE_PLUGIN_PORTAL(listOf(DokkaVersionType.RELEASE, DokkaVersionType.RC)),
+    MAVEN_PUBLISH_TEST(DokkaVersionType.values().toList()),
+    ;
 
     fun isSpaceRepository() = this == SPACE_DOKKA_DEV
 
-    fun isMavenRepository() =  this == MAVEN_CENTRAL || this == MAVEN_CENTRAL_SNAPSHOT
+    fun isMavenRepository() = this == MAVEN_CENTRAL || this == MAVEN_CENTRAL_SNAPSHOT
 
     fun isGradlePluginPortal() = this == GRADLE_PLUGIN_PORTAL
 
@@ -38,25 +39,13 @@ enum class DokkaPublicationChannel {
 val Project.publicationChannels: Set<DokkaPublicationChannel>
     get() {
         val publicationChannel = this.properties["dokka_publication_channel"]?.toString()
+        if (publicationChannel != null) error("replace `dokka_publication_channel` with `dokka_publication_channels`")
+
         val publicationChannels = this.properties["dokka_publication_channels"]?.toString()
-        if (publicationChannel != null && publicationChannels != null) {
-            throw IllegalArgumentException(
-                "Only one of dokka_publication_channel and dokka_publication_channel*s* can be set. Found: \n" +
-                        "dokka_publication_channel=$publicationChannel\n" +
-                        "dokka_publication_channels=$publicationChannels"
-            )
-        }
+            ?: return emptySet()
 
-        if (publicationChannel != null) {
-            return setOf(DokkaPublicationChannel.fromPropertyString(publicationChannel))
-        }
-
-        if (publicationChannels != null) {
-            return publicationChannels.split("&").map { channel ->
-                DokkaPublicationChannel.fromPropertyString(channel)
-            }.toSet()
-        }
-
-        return emptySet()
+        return publicationChannels
+            .split("&")
+            .map { channel -> DokkaPublicationChannel.fromPropertyString(channel) }
+            .toSet()
     }
-

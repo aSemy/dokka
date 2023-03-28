@@ -4,6 +4,7 @@ import org.jetbrains.registerDokkaArtifactPublication
 plugins {
     id("org.jetbrains.conventions.kotlin-jvm")
     id("org.jetbrains.conventions.maven-publish")
+    //id("dev.adamko.dev-publish")
     id("com.github.johnrengelman.shadow")
 }
 
@@ -69,7 +70,7 @@ tasks {
     }
 }
 
-registerDokkaArtifactPublication("kotlinAnalysisIntelliJ") {
+registerDokkaArtifactPublication {
     artifactId = "kotlin-analysis-intellij"
     component = Shadow
 }

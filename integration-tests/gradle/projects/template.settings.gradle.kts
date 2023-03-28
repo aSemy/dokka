@@ -14,7 +14,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "org.jetbrains.dokka") {
-                useModule("org.jetbrains.dokka:dokka-gradle-plugin:for-integration-tests-SNAPSHOT")
+                useModule("org.jetbrains.dokka:dokka-gradle-plugin:1.8.20-SNAPSHOT")
             }
 
             if (requested.id.id == "com.android.library") {
@@ -27,12 +27,18 @@ pluginManagement {
         }
     }
     repositories {
-        mavenLocal()
+        maven("/Users/semene000/projects/3rd-party/kotlin/dokka/integration-tests/gradle/build/maven-dev/")
         maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
         mavenCentral()
         gradlePluginPortal()
         google()
         maven("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-eap")
         maven("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev")
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        maven("/path/to/project/build/maven-dev/")
     }
 }

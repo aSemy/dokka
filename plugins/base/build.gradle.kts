@@ -3,6 +3,7 @@ import org.jetbrains.registerDokkaArtifactPublication
 plugins {
     id("org.jetbrains.conventions.kotlin-jvm")
     id("org.jetbrains.conventions.maven-publish")
+    //id("dev.adamko.dev-publish")
 }
 
 dependencies {
@@ -75,6 +76,6 @@ tasks {
     }
 }
 
-registerDokkaArtifactPublication("dokkaBase") {
+registerDokkaArtifactPublication {
     artifactId = "dokka-base"
 }

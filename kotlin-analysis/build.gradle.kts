@@ -3,6 +3,7 @@ import org.jetbrains.registerDokkaArtifactPublication
 plugins {
     id("org.jetbrains.conventions.kotlin-jvm")
     id("org.jetbrains.conventions.maven-publish")
+    //id("dev.adamko.dev-publish")
     id("com.github.johnrengelman.shadow")
 }
 
@@ -12,6 +13,6 @@ dependencies {
     api(project("compiler-dependency", configuration = "shadow"))
 }
 
-registerDokkaArtifactPublication("dokkaAnalysis") {
+registerDokkaArtifactPublication {
     artifactId = "dokka-analysis"
 }

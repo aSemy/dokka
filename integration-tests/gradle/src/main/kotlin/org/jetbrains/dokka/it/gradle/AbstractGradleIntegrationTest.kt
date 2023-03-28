@@ -42,10 +42,9 @@ abstract class AbstractGradleIntegrationTest : AbstractIntegrationTest() {
                     versions.androidGradlePluginVersion?.let { androidVersion ->
                         "-Pdokka_it_android_gradle_plugin_version=$androidVersion"
                     },
-                    * arguments
+                    *arguments
                 )
-            ).run { this as DefaultGradleRunner }
-            .withJvmArguments(jvmArgs)
+            ).withJvmArguments(jvmArgs)
     }
 
     fun GradleRunner.buildRelaxed(): BuildResult {
@@ -60,6 +59,12 @@ abstract class AbstractGradleIntegrationTest : AbstractIntegrationTest() {
             }
             throw e
         }
+    }
+
+    companion object {
+        private fun GradleRunner.withJvmArguments(jvmArguments: List<String>): GradleRunner =
+            (this as DefaultGradleRunner).withJvmArguments(jvmArguments)
+
     }
 }
 

@@ -1,4 +1,4 @@
-import org.jetbrains.dependsOnMavenLocalPublication
+//import org.jetbrains.dependsOnMavenLocalPublication
 
 plugins {
     id("org.jetbrains.conventions.dokka-integration-test")
@@ -12,7 +12,7 @@ dependencies {
 }
 
 tasks.integrationTest {
-    dependsOnMavenLocalPublication()
+    //dependsOnMavenLocalPublication()
 
     dependsOn(tasks.installMavenBinary)
     val mvn = mavenCliSetup.mvn

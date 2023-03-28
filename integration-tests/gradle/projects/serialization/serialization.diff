@@ -46,7 +46,7 @@ index c4888992..d845be67 100644
  junit_version=4.12
  jackson_version=2.10.0.pr1
 -dokka_version=1.7.0
-+dokka_version=for-integration-tests-SNAPSHOT
++dokka_version=1.8.20-TEST
  native.deploy=
  validator_version=0.10.1
  knit_version=0.3.0

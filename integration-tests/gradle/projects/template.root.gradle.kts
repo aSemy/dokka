@@ -1,5 +1,6 @@
 allprojects {
     repositories {
+        maven("/Users/semene000/projects/3rd-party/kotlin/dokka/integration-tests/gradle/build/maven-dev/")
         maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
         mavenLocal()
         mavenCentral()

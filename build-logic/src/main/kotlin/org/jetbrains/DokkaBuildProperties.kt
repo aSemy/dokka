@@ -1,8 +1,12 @@
 package org.jetbrains
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.provider.SetProperty
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.kotlin.dsl.setProperty
+import org.jetbrains.DokkaPublicationChannel.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import javax.inject.Inject
 
@@ -16,6 +20,7 @@ import javax.inject.Inject
  */
 abstract class DokkaBuildProperties @Inject constructor(
     private val providers: ProviderFactory,
+    private val objects: ObjectFactory,
 ) {
 
     /**
@@ -43,6 +48,17 @@ abstract class DokkaBuildProperties @Inject constructor(
      */
     val kotlinLanguageLevel: Provider<KotlinVersion> =
         dokkaProperty("kotlinLanguageLevel", KotlinVersion::fromVersion)
+
+    val enabledPublicationChannels: SetProperty<DokkaPublicationChannel> =
+        objects.setProperty<DokkaPublicationChannel>()
+            .convention(
+                setOf(
+                    SPACE_DOKKA_DEV,
+                    MAVEN_CENTRAL,
+                    MAVEN_CENTRAL_SNAPSHOT,
+                    MAVEN_PUBLISH_TEST,
+                )
+            )
 
 
     private fun <T : Any> dokkaProperty(name: String, convert: (String) -> T) =

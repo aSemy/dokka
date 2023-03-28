@@ -165,4 +165,6 @@ abstract class AbstractIntegrationTest {
             )
         }
     }
+
+    val MAVEN_PUBLISH_TEST_REPO = File(System.getenv("MAVEN_PUBLISH_TEST_REPO"))
 }

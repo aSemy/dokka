@@ -4,6 +4,7 @@ import org.jetbrains.registerDokkaArtifactPublication
 plugins {
     id("org.jetbrains.conventions.kotlin-jvm")
     id("org.jetbrains.conventions.maven-publish")
+    //id("dev.adamko.dev-publish")
     id("org.jetbrains.conventions.maven-cli-setup")
 }
 
@@ -114,6 +115,6 @@ tasks.jar {
 }
 
 
-registerDokkaArtifactPublication("dokkaMavenPlugin") {
+registerDokkaArtifactPublication {
     artifactId = "dokka-maven-plugin"
 }

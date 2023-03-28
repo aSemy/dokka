@@ -1,10 +1,11 @@
 import org.jetbrains.dokkaVersion
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.registerDokkaArtifactPublication
 
 plugins {
     id("org.jetbrains.conventions.kotlin-jvm")
     id("org.jetbrains.conventions.maven-publish")
+    //id("dev.adamko.dev-publish")
 }
 
 dependencies {
@@ -40,12 +41,12 @@ tasks {
     }
 }
 
-tasks.withType(KotlinCompile::class).all {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + listOf("-opt-in=org.jetbrains.dokka.InternalDokkaApi",)
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-opt-in=org.jetbrains.dokka.InternalDokkaApi")
     }
 }
 
-registerDokkaArtifactPublication("dokkaCore") {
+registerDokkaArtifactPublication {
     artifactId = "dokka-core"
 }

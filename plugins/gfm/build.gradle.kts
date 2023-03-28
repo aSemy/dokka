@@ -3,6 +3,7 @@ import org.jetbrains.registerDokkaArtifactPublication
 plugins {
     id("org.jetbrains.conventions.kotlin-jvm")
     id("org.jetbrains.conventions.maven-publish")
+    //id("dev.adamko.dev-publish")
 }
 
 dependencies {
@@ -24,6 +25,6 @@ dependencies {
     }
 }
 
-registerDokkaArtifactPublication("gfmPlugin") {
+registerDokkaArtifactPublication {
     artifactId = "gfm-plugin"
 }

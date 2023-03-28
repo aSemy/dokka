@@ -3,6 +3,7 @@ import org.jetbrains.registerDokkaArtifactPublication
 plugins {
     id("org.jetbrains.conventions.kotlin-jvm")
     id("org.jetbrains.conventions.maven-publish")
+    //id("dev.adamko.dev-publish")
 }
 
 dependencies {
@@ -27,6 +28,6 @@ dependencies {
     testImplementation(libs.junit.jupiter)
 }
 
-registerDokkaArtifactPublication("javadocPlugin") {
+registerDokkaArtifactPublication {
     artifactId = "javadoc-plugin"
 }

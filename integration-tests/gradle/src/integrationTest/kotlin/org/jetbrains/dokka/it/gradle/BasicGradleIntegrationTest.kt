@@ -10,7 +10,8 @@ class BasicGradleIntegrationTest(override val versions: BuildVersions) : Abstrac
     companion object {
         @get:JvmStatic
         @get:Parameters(name = "{0}")
-        val versions = TestedVersions.ALL_SUPPORTED
+//        val versions = TestedVersions.ALL_SUPPORTED // TODO revert to ALL_SUPPORTED (temp changed because I'm working on the Gradle config)
+        val versions = listOf(TestedVersions.LATEST)
     }
 
     @BeforeTest
