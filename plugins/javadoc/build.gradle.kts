@@ -19,7 +19,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(projects.plugins.base.baseTestUtils)
-    testImplementation(projects.testUtils)
     testImplementation(projects.core.testApi)
 
     testImplementation(libs.jsoup)

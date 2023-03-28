@@ -1,5 +1,4 @@
 import org.jetbrains.dokkaVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.registerDokkaArtifactPublication
 
 plugins {
@@ -38,12 +37,6 @@ tasks {
                 }
             }
         }
-    }
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions {
-        freeCompilerArgs.add("-opt-in=org.jetbrains.dokka.InternalDokkaApi")
     }
 }
 
