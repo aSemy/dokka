@@ -3,6 +3,7 @@ import org.jetbrains.registerDokkaArtifactPublication
 plugins {
     id("org.jetbrains.conventions.kotlin-jvm")
     id("org.jetbrains.conventions.maven-publish")
+    `java-test-fixtures`
 }
 
 dependencies {
@@ -24,15 +25,23 @@ dependencies {
 
     implementation(libs.freemarker)
 
-    testImplementation(projects.plugins.base.baseTestUtils)
-    testImplementation(projects.core.contentMatcherTestUtils)
 
     implementation(libs.kotlinx.html)
 
+    testImplementation(testFixtures(projects.plugins.base))
+    testImplementation(testFixtures(projects.core))
+
     testImplementation(projects.kotlinAnalysis)
-    testImplementation(projects.core.testApi)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
+
+    testFixturesImplementation(kotlin("reflect"))
+
+    testFixturesCompileOnly(projects.plugins.base)
+    testFixturesImplementation(testFixtures(projects.core))
+
+    testFixturesImplementation(libs.jsoup)
+    testFixturesImplementation(kotlin("test-junit"))
 }
 
 val projectDistDir = project(":plugins:base:frontend").file("dist")

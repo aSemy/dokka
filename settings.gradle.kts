@@ -55,8 +55,6 @@ plugins {
 
 include(
     ":core",
-    ":core:test-api",
-    ":core:content-matcher-test-utils",
 
     ":kotlin-analysis",
     ":kotlin-analysis:intellij-dependency",
@@ -69,7 +67,6 @@ include(
     ":plugins:base",
     ":plugins:base:frontend",
     ":plugins:base:search-component",
-    ":plugins:base:base-test-utils",
     ":plugins:all-modules-page",
     ":plugins:templating",
     ":plugins:versioning",
