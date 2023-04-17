@@ -1,10 +1,13 @@
 package org.jetbrains.conventions
 
+import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME
+
 plugins {
     id("org.jetbrains.conventions.base")
     `maven-publish`
     signing
     id("org.jetbrains.conventions.dokka")
+    id("dev.adamko.kotlin.binary-compatibility-validator")
 }
 
 val javadocJar by tasks.registering(Jar::class) {
@@ -54,5 +57,11 @@ publishing {
                 url.convention("https://github.com/Kotlin/dokka/tree/master")
             }
         }
+    }
+}
+
+binaryCompatibilityValidator {
+    targets.matching { it.name == TEST_FIXTURE_SOURCESET_NAME }.configureEach {
+        enabled.set(true)
     }
 }
