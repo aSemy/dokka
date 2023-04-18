@@ -1,6 +1,7 @@
 package org.jetbrains.conventions
 
 import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME
+import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 
 plugins {
     id("org.jetbrains.conventions.base")
@@ -64,4 +65,12 @@ binaryCompatibilityValidator {
     targets.matching { it.name == TEST_FIXTURE_SOURCESET_NAME }.configureEach {
         enabled.set(true)
     }
+}
+
+plugins.withType<ShadowPlugin>().configureEach {
+    // manually disable publication of Shadow elements https://github.com/johnrengelman/shadow/issues/651#issue-839148311
+    // This is done to preserve compatibility and have the same behaviour as previous versions of Dokka.
+    // For more details, see https://github.com/Kotlin/dokka/pull/2704#issuecomment-1499517930
+    val javaComponent = components["java"] as AdhocComponentWithVariants
+    javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) { skip() }
 }
