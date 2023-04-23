@@ -44,6 +44,9 @@ abstract class DokkaBuildProperties @Inject constructor(
     val kotlinLanguageLevel: Provider<KotlinVersion> =
         dokkaProperty("kotlinLanguageLevel", KotlinVersion::fromVersion)
 
+    val signingKeyId = providers.environmentVariable("SIGN_KEY_ID")
+    val signingKey = providers.environmentVariable("SIGN_KEY")
+    val signingKeyPassphrase = providers.environmentVariable("SIGN_KEY_PASSPHRASE")
 
     private fun <T : Any> dokkaProperty(name: String, convert: (String) -> T) =
         providers.gradleProperty("org.jetbrains.dokka.$name").map(convert)

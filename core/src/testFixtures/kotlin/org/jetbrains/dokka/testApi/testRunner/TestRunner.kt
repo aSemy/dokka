@@ -181,7 +181,7 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
     )
 
     companion object {
-        private val filePathRegex = Regex("""[\n^](\/[\w|\-]+)+(\.\w+)?\s*\n""")
+        private val filePathRegex = Regex("""[\n^](/[\w|\-]+)+(\.\w+)?\s*\n""")
     }
 }
 

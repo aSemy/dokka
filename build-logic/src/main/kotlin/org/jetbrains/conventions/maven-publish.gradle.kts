@@ -1,7 +1,8 @@
 package org.jetbrains.conventions
 
-import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
+import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME
+import org.jetbrains.DokkaPublicationChannel
 
 plugins {
     id("org.jetbrains.conventions.base")
@@ -26,6 +27,22 @@ publishing {
         maven(rootProject.layout.buildDirectory.dir("maven-project-local")) {
             name = "MavenProjectLocal"
         }
+
+        val spaceRepo = maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev") {
+            name = DokkaPublicationChannel.SPACE_DOKKA_DEV.name
+            credentials {
+                username = System.getenv("SPACE_PACKAGES_USER")
+                password = System.getenv("SPACE_PACKAGES_SECRET")
+            }
+        }
+
+        tasks.withType<PublishToMavenRepository>()
+            .matching { it.repository?.name == spaceRepo.name }
+            .configureEach {
+                onlyIf("Space publication channel is enabled") {
+                    false // TODO check if Space repo is enabled
+                }
+            }
     }
 
     publications.withType<MavenPublication>().configureEach {
@@ -73,4 +90,26 @@ plugins.withType<ShadowPlugin>().configureEach {
     // For more details, see https://github.com/Kotlin/dokka/pull/2704#issuecomment-1499517930
     val javaComponent = components["java"] as AdhocComponentWithVariants
     javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) { skip() }
+}
+
+// Normally it's best to avoid 'afterEvaluate {}', but the signing plugin is not compatible with lazy evaluation and
+// must be configured _after_ the publications are added.
+afterEvaluate {
+    if (dokkaBuild.signingKey.isPresent && dokkaBuild.signingKeyPassphrase.isPresent) {
+        signing {
+            if (dokkaBuild.signingKeyId.isPresent) {
+                useInMemoryPgpKeys(
+                    dokkaBuild.signingKeyId.get(),
+                    dokkaBuild.signingKey.get(),
+                    dokkaBuild.signingKeyPassphrase.get(),
+                )
+            } else {
+                useInMemoryPgpKeys(
+                    dokkaBuild.signingKey.get(),
+                    dokkaBuild.signingKeyPassphrase.get(),
+                )
+            }
+            sign(publishing.publications)
+        }
+    }
 }

@@ -1,13 +1,14 @@
 package org.jetbrains.conventions
 
 import org.gradle.kotlin.dsl.invoke
-import org.jetbrains.isLocalPublication
 
 plugins {
     id("org.jetbrains.dokka")
 }
 
+
 tasks.dokkaHtml {
-    onlyIf { !isLocalPublication }
+    val isLocalPublication = provider { gradle.taskGraph.allTasks.any { it is PublishToMavenLocal } }
+    onlyIf { !isLocalPublication.get() }
     outputDirectory.set(layout.buildDirectory.dir("dokka").map { it.asFile })
 }

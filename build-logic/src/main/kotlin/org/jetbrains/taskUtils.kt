@@ -1,22 +1,13 @@
 package org.jetbrains
 
-import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
+import org.gradle.kotlin.dsl.withType
 
 fun Task.dependsOnMavenLocalPublication() {
     project.rootProject.allprojects.forEach { otherProject ->
-        otherProject.invokeWhenEvaluated { evaluatedProject ->
-            evaluatedProject.tasks.findByName("publishToMavenLocal")?.let { publishingTask ->
-                this.dependsOn(publishingTask)
-            }
-        }
+        dependsOn(
+            otherProject.tasks.withType<PublishToMavenLocal>()
+        )
     }
 }
-
-val Project.isLocalPublication: Boolean
-    get() = gradle.startParameter.taskNames.any {
-        it.endsWith("publishToMavenLocal", ignoreCase = true) ||
-                it.endsWith("integrationTest", ignoreCase = true) ||
-                it.endsWith("check", ignoreCase = true) ||
-                it.endsWith("test", ignoreCase = true)
-    }
