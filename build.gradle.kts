@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.conventions.base")
     id("org.jetbrains.conventions.dokka")
 
-    alias(libs.plugins.gradle.pluginPublish)
+    alias(libs.plugins.gradlePublish)
     alias(libs.plugins.nexusPublish)
 }
 
