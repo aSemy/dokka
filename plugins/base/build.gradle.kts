@@ -4,6 +4,7 @@ plugins {
     id("org.jetbrains.conventions.kotlin-jvm")
     id("org.jetbrains.conventions.maven-publish")
     `java-test-fixtures`
+    id("org.jetbrains.conventions.dokka-base-frontend-files")
 }
 
 dependencies {
@@ -42,45 +43,40 @@ dependencies {
 
     testFixturesImplementation(libs.jsoup)
     testFixturesImplementation(kotlin("test-junit"))
+
+    dokkaBaseFrontendFiles(projects.plugins.base.frontend) {
+        because("fetch frontend files from subproject :plugins:base:frontend")
+    }
 }
 
-val projectDistDir = project(":plugins:base:frontend").file("dist")
-val generateFrontendFiles = tasks.getByPath(":plugins:base:frontend:generateFrontendFiles")
+// access the frontend files via the dependency on :plugins:base:frontend
+val dokkaBaseFrontendFiles: Provider<FileCollection> =
+    configurations.dokkaBaseFrontendFiles.map { frontendFiles ->
+        frontendFiles.incoming.artifacts.artifactFiles
+    }
 
-val copyJsFiles by tasks.registering(Copy::class) {
-    from(projectDistDir) {
+val prepareDokkaBaseFrontendFiles by tasks.registering(Sync::class) {
+    description = "copy Dokka Base frontend files into the resources directory"
+
+    from(dokkaBaseFrontendFiles) {
         include("*.js")
+        into("dokka/scripts")
     }
-    dependsOn(generateFrontendFiles)
-    destinationDir =
-        File(sourceSets.main.get().resources.sourceDirectories.singleFile, "dokka/scripts")
-}
 
-val copyCssFiles by tasks.registering(Copy::class) {
-    from(projectDistDir) {
+    from(dokkaBaseFrontendFiles) {
         include("*.css")
+        into("dokka/styles")
     }
-    dependsOn(generateFrontendFiles)
-    destinationDir =
-        File(sourceSets.main.get().resources.sourceDirectories.singleFile, "dokka/styles")
+
+    into(layout.buildDirectory.dir("generated/src/main/resources"))
 }
 
-val copyFrontend by tasks.registering {
-    dependsOn(copyJsFiles, copyCssFiles)
+sourceSets.main {
+    resources.srcDir(prepareDokkaBaseFrontendFiles.map { it.destinationDir })
 }
 
-tasks {
-    processResources {
-        dependsOn(copyFrontend)
-    }
-
-    sourcesJar {
-        dependsOn(processResources)
-    }
-
-    test {
-        maxHeapSize = "4G"
-    }
+tasks.test {
+    maxHeapSize = "4G"
 }
 
 registerDokkaArtifactPublication {
