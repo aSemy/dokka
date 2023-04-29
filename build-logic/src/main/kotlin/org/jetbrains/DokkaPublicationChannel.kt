@@ -44,7 +44,7 @@ enum class DokkaPublicationChannel {
 val Project.publicationChannels: Set<DokkaPublicationChannel>
     get() {
         if ("dokka_publication_channel" in properties.keys) {
-            error("dokka_publication_channel is deprecated - use dokka_publication_channels instead")
+            error("dokka_publication_channel is deprecated - rename to dokka_publication_channels")
         }
 
         val publicationChannels = this.properties["dokka_publication_channels"]?.toString()

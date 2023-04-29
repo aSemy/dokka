@@ -83,6 +83,6 @@ tasks {
     }
 }
 
-registerDokkaArtifactPublication("dokkaBase") {
+registerDokkaArtifactPublication {
     artifactId = "dokka-base"
 }

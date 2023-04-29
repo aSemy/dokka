@@ -18,6 +18,6 @@ dependencies {
     testImplementation(libs.junit.jupiter)
 }
 
-registerDokkaArtifactPublication("androidDocumentationPlugin") {
+registerDokkaArtifactPublication {
     artifactId = "android-documentation-plugin"
 }

@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.conventions.maven-publish")
 }
 
-registerDokkaArtifactPublication("dokkaAllModulesPage") {
+registerDokkaArtifactPublication {
     artifactId = "all-modules-page-plugin"
 }
 

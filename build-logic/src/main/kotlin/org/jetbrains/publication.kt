@@ -4,10 +4,12 @@ import com.github.jengelman.gradle.plugins.shadow.ShadowExtension
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
-import org.gradle.kotlin.dsl.*
-import org.jetbrains.DokkaPublicationChannel.SPACE_DOKKA_DEV
-import java.net.URI
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.register
+import org.jetbrains.DokkaPublicationBuilder.Component.Java
+import org.jetbrains.DokkaPublicationBuilder.Component.Shadow
 
 class DokkaPublicationBuilder {
     enum class Component {
@@ -15,22 +17,21 @@ class DokkaPublicationBuilder {
     }
 
     var artifactId: String? = null
-    var component: Component = Component.Java
+    var component: Component = Java
 }
 
-
 fun Project.registerDokkaArtifactPublication(
-    publicationName: String,
     configure: DokkaPublicationBuilder.() -> Unit
 ) {
+    val builder = DokkaPublicationBuilder().apply(configure)
+
     configure<PublishingExtension> {
         publications {
-            register<MavenPublication>(publicationName) {
-                val builder = DokkaPublicationBuilder().apply(configure)
+            register<MavenPublication>("maven${builder.component.name}") {
                 artifactId = builder.artifactId
                 when (builder.component) {
-                    DokkaPublicationBuilder.Component.Java -> from(components["java"])
-                    DokkaPublicationBuilder.Component.Shadow -> run {
+                    Java -> from(components["java"])
+                    Shadow -> {
                         extensions.getByType<ShadowExtension>().component(this)
                         artifact(tasks["sourcesJar"])
                     }

@@ -26,6 +26,6 @@ dependencies {
     testImplementation(libs.junit.jupiter)
 }
 
-registerDokkaArtifactPublication("javadocPlugin") {
+registerDokkaArtifactPublication {
     artifactId = "javadoc-plugin"
 }

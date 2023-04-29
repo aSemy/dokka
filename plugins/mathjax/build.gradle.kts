@@ -21,6 +21,6 @@ dependencies {
     testImplementation(libs.junit.jupiter)
 }
 
-registerDokkaArtifactPublication("mathjaxPlugin") {
+registerDokkaArtifactPublication {
     artifactId = "mathjax-plugin"
 }

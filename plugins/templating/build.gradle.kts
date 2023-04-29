@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.conventions.maven-publish")
 }
 
-registerDokkaArtifactPublication("templating-plugin") {
+registerDokkaArtifactPublication {
     artifactId = "templating-plugin"
 }
 

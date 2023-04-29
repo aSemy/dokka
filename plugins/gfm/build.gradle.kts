@@ -26,6 +26,6 @@ dependencies {
     }
 }
 
-registerDokkaArtifactPublication("gfmPlugin") {
+registerDokkaArtifactPublication {
     artifactId = "gfm-plugin"
 }

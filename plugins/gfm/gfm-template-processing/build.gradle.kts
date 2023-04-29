@@ -21,6 +21,6 @@ dependencies {
     testImplementation(libs.junit.jupiter)
 }
 
-registerDokkaArtifactPublication("dokkaGfmTemplateProcessing") {
+registerDokkaArtifactPublication {
     artifactId = "gfm-template-processing-plugin"
 }

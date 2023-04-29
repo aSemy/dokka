@@ -46,6 +46,6 @@ tasks {
     }
 }
 
-registerDokkaArtifactPublication("dokkaCore") {
+registerDokkaArtifactPublication {
     artifactId = "dokka-core"
 }

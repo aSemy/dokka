@@ -20,7 +20,7 @@ tasks {
     }
 }
 
-registerDokkaArtifactPublication("kotlinAnalysisCompiler") {
+registerDokkaArtifactPublication {
     artifactId = "kotlin-analysis-compiler"
     component = Shadow
 }

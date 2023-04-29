@@ -29,7 +29,7 @@ publishing {
         }
 
         val spaceRepo = maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev") {
-            name = DokkaPublicationChannel.SPACE_DOKKA_DEV.name
+            name = "SpaceDokkaDev"
             credentials {
                 username = System.getenv("SPACE_PACKAGES_USER")
                 password = System.getenv("SPACE_PACKAGES_SECRET")

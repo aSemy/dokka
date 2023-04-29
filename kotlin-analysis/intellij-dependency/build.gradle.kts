@@ -69,7 +69,7 @@ tasks {
     }
 }
 
-registerDokkaArtifactPublication("kotlinAnalysisIntelliJ") {
+registerDokkaArtifactPublication {
     artifactId = "kotlin-analysis-intellij"
     component = Shadow
 }

@@ -16,6 +16,6 @@ dependencies {
     testImplementation(libs.junit.jupiter)
 }
 
-registerDokkaArtifactPublication("jekyllPlugin") {
+registerDokkaArtifactPublication {
     artifactId = "jekyll-plugin"
 }

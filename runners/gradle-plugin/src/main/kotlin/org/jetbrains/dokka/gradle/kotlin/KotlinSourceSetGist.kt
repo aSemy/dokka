@@ -26,4 +26,3 @@ internal fun Project.gistOf(sourceSet: KotlinSourceSet): KotlinSourceSetGist = K
     sourceRoots = sourceSet.kotlin.sourceDirectories.filter { it.exists() },
     dependentSourceSetNames = project.provider { sourceSet.dependsOn.map { it.name }.toSet() },
 )
-
