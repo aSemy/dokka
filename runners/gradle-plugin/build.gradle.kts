@@ -1,5 +1,3 @@
-import org.jetbrains.*
-
 plugins {
     `kotlin-dsl`
     id("org.jetbrains.conventions.maven-publish")
@@ -48,7 +46,7 @@ gradlePlugin {
             displayName = "Dokka plugin"
             description = "Dokka, the Kotlin documentation tool"
             implementationClass = "org.jetbrains.dokka.gradle.DokkaPlugin"
-            version = dokkaVersion
+            version = dokkaBuild.dokkaVersion.get()
             isAutomatedPublishing = true
         }
     }
@@ -87,10 +85,11 @@ tasks.withType<PublishToMavenRepository>().configureEach {
     onlyIf { publication != publishing.publications["dokkaGradlePluginForIntegrationTests"] }
 }
 
+// TODO migrate DGP publish config
 afterEvaluate { // Workaround for an interesting design choice https://github.com/gradle/gradle/blob/c4f935f77377f1783f70ec05381c8182b3ade3ea/subprojects/plugin-development/src/main/java/org/gradle/plugin/devel/plugins/MavenPluginPublishPlugin.java#L49
 //    configureSpacePublicationIfNecessary("pluginMaven", "dokkaGradlePluginPluginMarkerMaven")
 //    configureSonatypePublicationIfNecessary("pluginMaven", "dokkaGradlePluginPluginMarkerMaven")
-    createDokkaPublishTaskIfNecessary()
+//    createDokkaPublishTaskIfNecessary()
 }
 
 tasks.processResources {

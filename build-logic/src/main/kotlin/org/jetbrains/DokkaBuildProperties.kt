@@ -1,8 +1,10 @@
 package org.jetbrains
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.kotlin.dsl.setProperty
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import javax.inject.Inject
 
@@ -16,7 +18,16 @@ import javax.inject.Inject
  */
 abstract class DokkaBuildProperties @Inject constructor(
     private val providers: ProviderFactory,
+    objects: ObjectFactory,
 ) {
+
+    val dokkaVersion: Provider<String> =
+        dokkaProperty("version") { it }
+
+    val dokkaVersionType: Provider<DokkaVersionType?> =
+        dokkaVersion.flatMap {
+            providers.provider { DokkaVersionType.find(it) } // https://github.com/gradle/gradle/issues/12388
+        }
 
     /**
      * The main version of Java that should be used to build Dokka source code.
@@ -44,9 +55,19 @@ abstract class DokkaBuildProperties @Inject constructor(
     val kotlinLanguageLevel: Provider<KotlinVersion> =
         dokkaProperty("kotlinLanguageLevel", KotlinVersion::fromVersion)
 
-    val signingKeyId = providers.environmentVariable("SIGN_KEY_ID")
-    val signingKey = providers.environmentVariable("SIGN_KEY")
-    val signingKeyPassphrase = providers.environmentVariable("SIGN_KEY_PASSPHRASE")
+    val publicationChannels: Provider<Set<DokkaPublicationChannel>> =
+        objects.setProperty<DokkaPublicationChannel>().value(
+            dokkaProperty("publicationChannels") { publicationChannels ->
+                publicationChannels.split("&")
+                    .filter { it.isNotBlank() }
+                    .map { channel -> DokkaPublicationChannel.fromPropertyString(channel) }
+                    .toSet()
+            }
+        )
+
+    val signingKeyId: Provider<String> = providers.environmentVariable("SIGN_KEY_ID")
+    val signingKey: Provider<String> = providers.environmentVariable("SIGN_KEY")
+    val signingKeyPassphrase: Provider<String> = providers.environmentVariable("SIGN_KEY_PASSPHRASE")
 
     private fun <T : Any> dokkaProperty(name: String, convert: (String) -> T) =
         providers.gradleProperty("org.jetbrains.dokka.$name").map(convert)

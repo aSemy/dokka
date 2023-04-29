@@ -3,6 +3,8 @@ package org.jetbrains.conventions
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME
 import org.jetbrains.DokkaPublicationChannel
+import org.jetbrains.DokkaPublicationChannel.*
+import org.jetbrains.DokkaVersionType
 
 plugins {
     id("org.jetbrains.conventions.base")
@@ -25,24 +27,16 @@ publishing {
         // ./gradlew publishAllPublicationsToMavenProjectLocalRepository
         // and check $rootDir/build/maven-project-local
         maven(rootProject.layout.buildDirectory.dir("maven-project-local")) {
-            name = "MavenProjectLocal"
+            name = MAVEN_PROJECT_LOCAL.prettyName
         }
 
-        val spaceRepo = maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev") {
-            name = "SpaceDokkaDev"
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev") {
+            name = SPACE_DOKKA_DEV.prettyName
             credentials {
                 username = System.getenv("SPACE_PACKAGES_USER")
                 password = System.getenv("SPACE_PACKAGES_SECRET")
             }
         }
-
-        tasks.withType<PublishToMavenRepository>()
-            .matching { it.repository?.name == spaceRepo.name }
-            .configureEach {
-                onlyIf("Space publication channel is enabled") {
-                    false // TODO check if Space repo is enabled
-                }
-            }
     }
 
     publications.withType<MavenPublication>().configureEach {
@@ -112,4 +106,60 @@ afterEvaluate {
             sign(publishing.publications)
         }
     }
+}
+
+
+fun PublishToMavenRepository.publicationChannel(): Provider<DokkaPublicationChannel> =
+    providers.provider {
+        DokkaPublicationChannel.fromRepository(repository)
+            ?: error("could not find DokkaPublicationChannel for repository ${repository?.name} ")
+        // If a repository isn't matched to a DokkaPublicationChannel then either update
+        // the fromRepository() method, or add a new DokkaPublicationChannel
+    }
+
+tasks.withType<PublishToMavenRepository>().configureEach {
+
+    val publicationChannel = publicationChannel()
+
+    val publicationVersionType = providers.provider { DokkaVersionType.find(publication?.version) }
+
+    val publicationVersionAcceptedPredicate = providers.zip(
+        publicationChannel,
+        publicationVersionType,
+    ) { channel, currentVersion ->
+        channel.acceptedDokkaVersionTypes.any { acceptedVersionType ->
+            acceptedVersionType == currentVersion
+        }
+    }
+
+    onlyIf("publication channel and version are aligned") {
+        val result = publicationVersionAcceptedPredicate.get()
+        if (!result) {
+            val gav = "${publication?.groupId}:${publication?.artifactId}:${publication?.version}"
+            logger.warn(
+                "Cannot publish $gav to repository ${repository?.name} - " +
+                        "version is not in accepted channel " +
+                        publicationChannel.get().acceptedDokkaVersionTypes.joinToString()
+            )
+        }
+        result
+    }
+}
+
+
+val dokkaPublish by tasks.registering {
+    group = PublishingPlugin.PUBLISH_TASK_GROUP
+
+    dependsOn(
+        tasks
+            .withType<PublishToMavenRepository>()
+            .matching {
+                it.publicationChannel().get() in listOf(
+                    SPACE_DOKKA_DEV,
+                    MAVEN_CENTRAL,
+                    MAVEN_CENTRAL_SNAPSHOT,
+                    GRADLE_PLUGIN_PORTAL,
+                )
+            }
+    )
 }

@@ -1,4 +1,3 @@
-import org.jetbrains.dokkaVersion
 import org.jetbrains.registerDokkaArtifactPublication
 
 plugins {
@@ -33,15 +32,12 @@ dependencies {
     testFixturesImplementation("junit:junit:4.13.2") // TODO: remove dependency to junit
 }
 
-tasks {
-    processResources {
-        inputs.property("dokkaVersion", dokkaVersion)
-        eachFile {
-            if (name == "dokka-version.properties") {
-                filter { line ->
-                    line.replace("<dokka-version>", dokkaVersion)
-                }
-            }
+tasks.processResources {
+    val dokkaVersion = dokkaBuild.dokkaVersion
+    inputs.property("dokkaVersion", dokkaVersion)
+    eachFile {
+        if (name == "dokka-version.properties") {
+            expand("dokkaVersion" to dokkaVersion.get())
         }
     }
 }

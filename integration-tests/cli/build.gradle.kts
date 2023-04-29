@@ -5,9 +5,8 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-val dokka_version: String by project
-evaluationDependsOn(":runners:cli")
-evaluationDependsOn(":plugins:base")
+//evaluationDependsOn(":runners:cli")
+//evaluationDependsOn(":plugins:base")
 
 dependencies {
     implementation(kotlin("test-junit"))
@@ -28,7 +27,8 @@ dependencies {
 
 val basePluginShadowJar by tasks.register("basePluginShadowJar", ShadowJar::class) {
     configurations = listOf(basePluginShadow)
-    archiveFileName.set("fat-base-plugin-$dokka_version.jar")
+    archiveBaseName.set("fat-base-plugin")
+    archiveVersion.set(dokkaBuild.dokkaVersion)
     archiveClassifier.set("")
 }
 

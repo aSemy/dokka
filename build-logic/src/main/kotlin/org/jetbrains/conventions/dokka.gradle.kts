@@ -9,6 +9,6 @@ plugins {
 
 tasks.dokkaHtml {
     val isLocalPublication = provider { gradle.taskGraph.allTasks.any { it is PublishToMavenLocal } }
-    onlyIf { !isLocalPublication.get() }
+    onlyIf("not publishing to MavenLocal") { !isLocalPublication.get() }
     outputDirectory.set(layout.buildDirectory.dir("dokka").map { it.asFile })
 }

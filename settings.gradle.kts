@@ -102,3 +102,11 @@ gradleEnterprise {
 
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+
+// TODO maybe move ValidatePublications logic to here?
+gradle.projectsEvaluated {
+    allprojects {
+
+    }
+}

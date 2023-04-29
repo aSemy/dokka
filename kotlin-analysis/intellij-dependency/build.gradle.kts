@@ -53,8 +53,8 @@ dependencies {
 
 tasks {
     shadowJar {
-        val dokka_version: String by project
-        archiveFileName.set("dokka-kotlin-analysis-intellij-$dokka_version.jar")
+        archiveBaseName.set("dokka-kotlin-analysis-intellij")
+        archiveVersion.set(dokkaBuild.dokkaVersion)
         archiveClassifier.set("")
 
         exclude("colorScheme/**")

@@ -16,8 +16,8 @@ dependencies {
 
 tasks {
     shadowJar {
-        val dokka_version: String by project
-        archiveFileName.set("dokka-cli-$dokka_version.jar")
+        archiveBaseName.set("dokka-cli")
+        archiveVersion.set(dokkaBuild.dokkaVersion)
         archiveClassifier.set("")
         manifest {
             attributes("Main-Class" to "org.jetbrains.dokka.MainKt")

@@ -13,8 +13,8 @@ dependencies {
 
 tasks {
     shadowJar {
-        val dokka_version: String by project
-        archiveFileName.set("dokka-kotlin-analysis-compiler-$dokka_version.jar")
+        archiveBaseName.set("dokka-kotlin-analysis-compiler")
+        archiveVersion.set(dokkaBuild.dokkaVersion)
         archiveClassifier.set("")
         exclude("com/intellij/")
     }

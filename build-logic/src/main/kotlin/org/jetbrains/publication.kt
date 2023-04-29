@@ -36,26 +36,10 @@ fun Project.registerDokkaArtifactPublication(
                         artifact(tasks["sourcesJar"])
                     }
                 }
+
+                suppressPomMetadataWarningsFor("testFixturesApiElements")
+                suppressPomMetadataWarningsFor("testFixturesRuntimeElements")
             }
-        }
-    }
-
-    createDokkaPublishTaskIfNecessary()
-}
-
-
-fun Project.createDokkaPublishTaskIfNecessary() {
-    tasks.maybeCreate("dokkaPublish").run {
-        if (publicationChannels.any { it.isSpaceRepository() }) {
-            dependsOn(tasks.named("publish"))
-        }
-
-        if (publicationChannels.any { it.isMavenRepository() }) {
-            dependsOn(tasks.named("publishToSonatype"))
-        }
-
-        if (publicationChannels.any { it.isGradlePluginPortal() }) {
-            dependsOn(tasks.named("publishPlugins"))
         }
     }
 }

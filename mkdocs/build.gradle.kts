@@ -1,11 +1,11 @@
-import org.jetbrains.dokkaVersionType
 import org.jetbrains.DokkaVersionType
 
 plugins {
-    id("ru.vyarus.mkdocs") version "2.3.0"
+    id("org.jetbrains.conventions.base")
+    id("ru.vyarus.mkdocs-build") version "3.0.0"
 }
 
-if (dokkaVersionType != DokkaVersionType.RELEASE) {
+if (dokkaBuild.dokkaVersionType.get() != DokkaVersionType.RELEASE) {
     // Do not generate the root index.html file with the redirect
     // to a non-release version, otherwise GitHub pages based documentation
     // will always lead to the non-stable documentation.

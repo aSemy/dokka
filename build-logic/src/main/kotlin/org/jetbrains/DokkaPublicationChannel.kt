@@ -2,27 +2,29 @@
 
 package org.jetbrains
 
-import org.gradle.api.Project
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 
 enum class DokkaPublicationChannel {
     SPACE_DOKKA_DEV,
     MAVEN_CENTRAL,
     MAVEN_CENTRAL_SNAPSHOT,
-    GRADLE_PLUGIN_PORTAL;
+    GRADLE_PLUGIN_PORTAL,
+    MAVEN_PROJECT_LOCAL,
+    ;
 
     val acceptedDokkaVersionTypes: List<DokkaVersionType>
         get() = when (this) {
             MAVEN_CENTRAL -> listOf(DokkaVersionType.RELEASE, DokkaVersionType.RC)
             MAVEN_CENTRAL_SNAPSHOT -> listOf(DokkaVersionType.SNAPSHOT)
-            SPACE_DOKKA_DEV -> listOf(
-                DokkaVersionType.RELEASE,
-                DokkaVersionType.RC,
-                DokkaVersionType.DEV,
-                DokkaVersionType.SNAPSHOT,
-            )
-
             GRADLE_PLUGIN_PORTAL -> listOf(DokkaVersionType.RELEASE, DokkaVersionType.RC)
+            SPACE_DOKKA_DEV,
+            MAVEN_PROJECT_LOCAL -> DokkaVersionType.values().toList()
         }
+
+    val prettyName: String =
+        name
+            .split("_")
+            .joinToString("") { it.toLowerCase().capitalize() }
 
     fun isSpaceRepository() = this == SPACE_DOKKA_DEV
 
@@ -36,23 +38,26 @@ enum class DokkaPublicationChannel {
             "maven-central-release" -> MAVEN_CENTRAL
             "maven-central-snapshot" -> MAVEN_CENTRAL_SNAPSHOT
             "gradle-plugin-portal" -> GRADLE_PLUGIN_PORTAL
-            else -> throw IllegalArgumentException("Unknown dokka_publication_channel=$value")
+            else -> throw IllegalArgumentException("Unknown dokka_publication_channel '$value'")
+        }
+
+        fun fromRepository(value: MavenArtifactRepository?): DokkaPublicationChannel? {
+            if (value == null) return null
+
+            val urlString = value.url.toString()
+
+            // Maven Central repo is added automatically by io.github.gradle-nexus.publish-plugin,
+            // so we have to determine the channel based on the URL
+            return if ("https://oss.sonatype.org" in urlString) {
+                when {
+                    "snapshot" in urlString -> MAVEN_CENTRAL_SNAPSHOT
+                    else -> MAVEN_CENTRAL
+                }
+            } else {
+                // the other repositories are added manually, or have distinct names, and can be found by name
+                // (assuming that prettyName was used to name the repo)
+                values().find { it.prettyName == value.name }
+            }
         }
     }
 }
-
-val Project.publicationChannels: Set<DokkaPublicationChannel>
-    get() {
-        if ("dokka_publication_channel" in properties.keys) {
-            error("dokka_publication_channel is deprecated - rename to dokka_publication_channels")
-        }
-
-        val publicationChannels = this.properties["dokka_publication_channels"]?.toString()
-            ?: ""
-
-        return publicationChannels
-            .split("&")
-            .filter { it.isNotBlank() }
-            .map { channel -> DokkaPublicationChannel.fromPropertyString(channel) }
-            .toSet()
-    }
